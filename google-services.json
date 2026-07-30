@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "976477711510",
+    "project_id": "ihelp-7fbf4",
+    "storage_bucket": "ihelp-7fbf4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976477711510:android:1f7e57a970668e3945a6b7",
+        "android_client_info": {
+          "package_name": "br.edu.iftm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "976477711510-rku6bdcm6ook7qbaqut921orb6amc2n7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmm2cINISyNWm9IKcpecNDFsikuOh8_1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "976477711510-rku6bdcm6ook7qbaqut921orb6amc2n7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
