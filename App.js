@@ -13,7 +13,7 @@ export const onLogout = async () => {
 };
 
 GoogleSignin.configure({
-  webClientId: "usar o valor obtido do arquivo google-services.json",
+  webClientId: "855522395793-svh8kd77sk4toha7olmd09s9ct8ahhja.apps.googleusercontent.com",
 });
 
 // Telas
