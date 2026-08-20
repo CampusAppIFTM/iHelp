@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "855522395793",
-    "project_id": "auth-3709a",
-    "storage_bucket": "auth-3709a.firebasestorage.app"
+    "project_number": "1036578729853",
+    "project_id": "auth-60387",
+    "storage_bucket": "auth-60387.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:855522395793:android:d4e7769632731c1a35e130",
+        "mobilesdk_app_id": "1:1036578729853:android:2c33223034837a2b86e614",
         "android_client_info": {
-          "package_name": "br.edu.iftm"
+          "package_name": "br.edu.iftm.camis"
         }
       },
       "oauth_client": [
         {
-          "client_id": "855522395793-svh8kd77sk4toha7olmd09s9ct8ahhja.apps.googleusercontent.com",
+          "client_id": "1036578729853-uujsdnd087q51u30lmg961u37bafpgse.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.edu.iftm.camis",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1036578729853-rhela7lu47jh024uv1vs23pk2vecnt80.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBDbE1PtxHHPg4JwVkGmhq4OWHgUr31GlU"
+          "current_key": "AIzaSyCxkFOGOpBqURZmsg80kYlFaJgeDrRWdqo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "855522395793-svh8kd77sk4toha7olmd09s9ct8ahhja.apps.googleusercontent.com",
+              "client_id": "1036578729853-rhela7lu47jh024uv1vs23pk2vecnt80.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
