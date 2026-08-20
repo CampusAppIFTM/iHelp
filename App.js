@@ -4,8 +4,16 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 //funções de autenticação
 export const onLogin = async () => {
-  const user = await GoogleSignin.signIn();
-  return user;
+  try {
+    const response = await GoogleSignin.signIn();
+    if (response.type === "success") {
+      return response;
+    }
+    return null;
+  } catch (error) {
+    console.error("Erro no login:", error.code, error.message);
+    return null;
+  }
 };
 
 export const onLogout = async () => {
@@ -13,7 +21,7 @@ export const onLogout = async () => {
 };
 
 GoogleSignin.configure({
-  webClientId: "855522395793-svh8kd77sk4toha7olmd09s9ct8ahhja.apps.googleusercontent.com",
+  webClientId: "1036578729853-uujsdnd087q51u30lmg961u37bafpgse.apps.googleusercontent.com",
 });
 
 // Telas
