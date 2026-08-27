@@ -21,7 +21,7 @@ export const onLogout = async () => {
 };
 
 GoogleSignin.configure({
-  webClientId: "1036578729853-uujsdnd087q51u30lmg961u37bafpgse.apps.googleusercontent.com",
+  webClientId: "1036578729853-rhela7lu47jh024uv1vs23pk2vecnt80.apps.googleusercontent.com",
 });
 
 // Telas
