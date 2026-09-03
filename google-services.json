@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "477646126837",
+    "project_id": "auth-ihelp-e0eed",
+    "storage_bucket": "auth-ihelp-e0eed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477646126837:android:7c0906d8a7539ce70d8fbc",
+        "android_client_info": {
+          "package_name": "iHelp.camis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "477646126837-6q2cmd3tt0dupmvacqptnlack9rpoge5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBx__wovptAGb12I_ojRJ9sZKAuHVyHd4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "477646126837-6q2cmd3tt0dupmvacqptnlack9rpoge5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
