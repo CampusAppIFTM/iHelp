@@ -42,3 +42,5 @@ yarn-error.*
 
 *.apk
 android/app/build/
+".env" 
+"google-services.json" 
