@@ -45,6 +45,7 @@ import { auth } from "../../firebaseConfig";
 export function configurarGoogleSignin() {
   GoogleSignin.configure({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    prompt: "select_account",
     // offlineAccess: true, // só se o seu backend precisar de refresh token
   });
 }
@@ -62,6 +63,7 @@ export function configurarGoogleSignin() {
  * @returns {() => void} função que cancela a observação (usar no cleanup do useEffect)
  */
 export function observarUsuario(callback) {
+ 
   return onAuthStateChanged(auth, callback);
 }
 
@@ -91,11 +93,24 @@ export async function entrarComGoogle() {
   }
 
   const idToken = resposta.data?.idToken;
-
+  console.log(resposta.data);
+  
+  const email= resposta.data?.user.email
+  
   if (!idToken) {
     // Quase sempre significa webClientId ausente ou incorreto.
     throw new Error(
       "O Google não devolveu o idToken. Verifique o webClientId informado em configurarGoogleSignin()."
+    );
+  }
+
+  console.log("email",email);
+  
+  if (!email?.includes("iftm.edu.br")) {
+    // Quase sempre significa webClientId ausente ou incorreto.
+    sair()
+    throw new Error(
+      "O email não é do IFTM"
     );
   }
 
