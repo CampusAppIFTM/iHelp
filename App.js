@@ -17,9 +17,9 @@ import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
 
 import { configurarGoogleSignin, observarUsuario } from "./src/services/autenticacao";
-import CarregandoScreen from "./src/screens/CarregandoScreen";
-import LoginScreen from "./src/screens/LoginScreen";
-import HomeScreen from "./src/screens/HomeScreen";
+import CarregandoScreen from "./src/screens/Carregando/carregando";
+import LoginScreen from "./src/screens/Login/login";
+import HomeScreen from "./src/screens/Home/home";
 
 const App = () => {
   const [usuario, setUsuario] = useState(null);

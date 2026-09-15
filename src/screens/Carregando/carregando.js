@@ -1,5 +1,5 @@
 /**
- * src/screens/CarregandoScreen.js
+ * src/screens/Carregando/carregando.js
  * ---------------------------------------------------------------------------
  * Tela exibida enquanto o Firebase verifica se existe uma sessão salva.
  *
@@ -7,7 +7,9 @@
  * pular para a Home -- o clássico "piscar" de aplicativos mal resolvidos.
  * ---------------------------------------------------------------------------
  */
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator } from "react-native";
+
+import styles from "./carregando.styles";
 
 const CarregandoScreen = () => (
   <View style={styles.container}>
@@ -16,12 +18,3 @@ const CarregandoScreen = () => (
 );
 
 export default CarregandoScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-  },
-});

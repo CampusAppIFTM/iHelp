@@ -1,5 +1,5 @@
 /**
- * src/screens/HomeScreen.js
+ * src/screens/Home/home.js
  * ---------------------------------------------------------------------------
  * Tela exibida quando existe um usuário autenticado.
  *
@@ -11,9 +11,10 @@
  * ---------------------------------------------------------------------------
  */
 import { useState } from "react";
-import { View, Text, Image, Button, StyleSheet } from "react-native";
+import { View, Text, Image, Button } from "react-native";
 
-import { sair } from "../services/autenticacao";
+import { sair } from "../../services/autenticacao";
+import styles from "./home.styles";
 
 const HomeScreen = ({ usuario }) => {
   const [saindo, setSaindo] = useState(false);
@@ -59,46 +60,3 @@ const HomeScreen = ({ usuario }) => {
 };
 
 export default HomeScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    padding: 24,
-  },
-  foto: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    marginBottom: 24,
-  },
-  fotoVazia: {
-    backgroundColor: "#ddd",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  inicial: {
-    fontSize: 56,
-    color: "#555",
-  },
-  nome: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  email: {
-    fontSize: 16,
-    color: "#666",
-  },
-  uid: {
-    fontSize: 12,
-    color: "#999",
-    marginTop: 8,
-  },
-  botao: {
-    marginTop: 32,
-    width: 200,
-  },
-});

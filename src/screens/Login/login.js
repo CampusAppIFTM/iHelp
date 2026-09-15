@@ -1,5 +1,5 @@
 /**
- * src/screens/LoginScreen.js
+ * src/screens/Login/login.js
  * ---------------------------------------------------------------------------
  * Tela de login.
  *
@@ -12,10 +12,11 @@
  * ---------------------------------------------------------------------------
  */
 import { useState } from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
-import { entrarComGoogle, descreverErro } from "../services/autenticacao";
+import { entrarComGoogle, descreverErro } from "../../services/autenticacao";
+import styles from "./login.styles";
 
 const LoginScreen = () => {
   const [carregando, setCarregando] = useState(false);
@@ -68,35 +69,3 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    padding: 24,
-  },
-  titulo: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  subtitulo: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 32,
-  },
-  botaoGoogle: {
-    width: 240,
-    height: 48,
-  },
-  areaAviso: {
-    height: 48,
-    justifyContent: "center",
-  },
-  erro: {
-    color: "#c62828",
-    textAlign: "center",
-  },
-});
