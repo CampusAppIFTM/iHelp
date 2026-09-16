@@ -12,9 +12,9 @@
  * ---------------------------------------------------------------------------
  */
 import { useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, Image, ActivityIndicator } from "react-native";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
-
+import logoImg from "../../../assets/logo.png";
 import { entrarComGoogle, descreverErro } from "../../services/autenticacao";
 import styles from "./login.styles";
 
@@ -43,7 +43,12 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Minha Agenda</Text>
+
+      <View style={styles.logoContainer}>
+        <Image source={logoImg} style={styles.logo} resizeMode="contain" />
+      </View>
+
+      <Text style={styles.titulo}>iHelp</Text>
       <Text style={styles.subtitulo}>Entre para continuar</Text>
 
       {/*

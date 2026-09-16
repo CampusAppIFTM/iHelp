@@ -8,6 +8,15 @@ export default StyleSheet.create({
     backgroundColor: "#fff",
     padding: 24,
   },
+  logoContainer: {
+    width: 100,
+    height: 100,
+    marginBottom: 16,
+  },
+  logo: {
+    width: "100%",
+    height: "100%",
+  },
   titulo: {
     fontSize: 32,
     fontWeight: "bold",
