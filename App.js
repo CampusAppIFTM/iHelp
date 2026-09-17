@@ -15,18 +15,26 @@
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useFonts } from "expo-font";
 import {
-  useFonts,
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
 } from "@expo-google-fonts/plus-jakarta-sans";
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from "@expo-google-fonts/inter";
 
 import { configurarGoogleSignin, observarUsuario } from "./src/services/autenticacao";
 import CarregandoScreen from "./src/screens/Carregando/carregando";
 import LoginScreen from "./src/screens/Login/login";
 import HomeScreen from "./src/screens/Home/home";
+import { cores } from "./src/theme";
 
 const App = () => {
   const [usuario, setUsuario] = useState(null);
@@ -36,6 +44,10 @@ const App = () => {
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
 
   useEffect(() => {
@@ -53,16 +65,18 @@ const App = () => {
   }, []); // array vazio: executa uma única vez, na montagem
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      {verificando || (!fonteCarregada && !erroFonte) ? (
-        <CarregandoScreen />
-      ) : usuario ? (
-        <HomeScreen usuario={usuario} />
-      ) : (
-        <LoginScreen />
-      )}
-    </View>
+    <SafeAreaProvider>
+      <View style={styles.container}>
+        <StatusBar style="dark" />
+        {verificando || (!fonteCarregada && !erroFonte) ? (
+          <CarregandoScreen />
+        ) : usuario ? (
+          <HomeScreen usuario={usuario} />
+        ) : (
+          <LoginScreen />
+        )}
+      </View>
+    </SafeAreaProvider>
   );
 };
 
@@ -71,5 +85,6 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: cores.branco,
   },
 });

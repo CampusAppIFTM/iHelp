@@ -1,17 +1,17 @@
 import { StyleSheet } from "react-native";
 
-import { fonte } from "../../theme/fonte";
+import { cores, fonte } from "../../theme";
 
 export default StyleSheet.create({
   tela: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: cores.branco,
   },
   container: {
     flexGrow: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: cores.branco,
     paddingHorizontal: 28,
     paddingVertical: 32,
   },
@@ -25,14 +25,15 @@ export default StyleSheet.create({
     height: "100%",
   },
   titulo: {
-    fontFamily: fonte.bold,
+    fontFamily: fonte.headline.bold,
     fontSize: 32,
+    color: cores.texto,
     marginBottom: 8,
   },
   subtitulo: {
-    fontFamily: fonte.regular,
+    fontFamily: fonte.corpo.regular,
     fontSize: 16,
-    color: "#666",
+    color: cores.textoSuave,
     marginBottom: 32,
     textAlign: "center",
   },
@@ -41,16 +42,16 @@ export default StyleSheet.create({
     maxWidth: 400,
   },
   rotulo: {
-    fontFamily: fonte.bold,
+    fontFamily: fonte.corpo.bold,
     fontSize: 12,
     letterSpacing: 0.6,
-    color: "#121212",
+    color: cores.texto,
     marginBottom: 8,
   },
   campo: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F6F7",
+    backgroundColor: cores.fundoSuave,
     borderRadius: 28,
     paddingHorizontal: 16,
     height: 52,
@@ -59,9 +60,9 @@ export default StyleSheet.create({
   },
   entrada: {
     flex: 1,
-    fontFamily: fonte.regular,
+    fontFamily: fonte.corpo.regular,
     fontSize: 15,
-    color: "#1A1A1A",
+    color: cores.texto,
     padding: 0,
   },
   linhaSenha: {
@@ -71,13 +72,13 @@ export default StyleSheet.create({
     marginBottom: 8,
   },
   linkLaranja: {
-    fontFamily: fonte.semibold,
-    color: "#005F73",
+    fontFamily: fonte.corpo.semibold,
+    color: cores.primary,
     fontSize: 13,
   },
   botaoEntrar: {
     marginTop: 8,
-    backgroundColor: "#005F73",
+    backgroundColor: cores.primary,
     borderRadius: 28,
     height: 54,
     flexDirection: "row",
@@ -86,8 +87,8 @@ export default StyleSheet.create({
     gap: 8,
   },
   textoBotaoEntrar: {
-    fontFamily: fonte.bold,
-    color: "#fff",
+    fontFamily: fonte.headline.bold,
+    color: cores.textoInverso,
     fontSize: 16,
   },
   botaoDesativado: {
@@ -102,11 +103,11 @@ export default StyleSheet.create({
   divisorLinha: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E4E8E9",
+    backgroundColor: cores.borda,
   },
   divisorTexto: {
-    fontFamily: fonte.regular,
-    color: "#9AA6A9",
+    fontFamily: fonte.corpo.regular,
+    color: cores.textoSuave,
     fontSize: 13,
   },
   linhaGoogle: {
@@ -120,10 +121,10 @@ export default StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 28,
     borderWidth: 1,
-    borderColor: "#E8ECEE",
-    backgroundColor: "#fff",
+    borderColor: cores.borda,
+    backgroundColor: cores.branco,
     gap: 10,
-    shadowColor: "#000",
+    shadowColor: cores.sombra,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,
@@ -134,9 +135,9 @@ export default StyleSheet.create({
     height: 20,
   },
   textoGoogle: {
-    fontFamily: fonte.medium,
+    fontFamily: fonte.corpo.medium,
     fontSize: 16,
-    color: "#3C4043",
+    color: cores.texto,
   },
   areaAviso: {
     minHeight: 28,
@@ -144,20 +145,20 @@ export default StyleSheet.create({
     marginTop: 12,
   },
   erro: {
-    fontFamily: fonte.regular,
-    color: "#c62828",
+    fontFamily: fonte.corpo.regular,
+    color: cores.erro,
     textAlign: "center",
   },
   aviso: {
-    fontFamily: fonte.regular,
-    color: "#0A5C63",
+    fontFamily: fonte.corpo.regular,
+    color: cores.primary,
     textAlign: "center",
   },
   rodape: {
-    fontFamily: fonte.regular,
+    fontFamily: fonte.corpo.regular,
     marginTop: 8,
     textAlign: "center",
-    color: "#6B7C80",
+    color: cores.textoSuave,
     fontSize: 14,
   },
 });

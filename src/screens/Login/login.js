@@ -32,6 +32,7 @@ import {
   enviarRedefinicaoSenha,
   descreverErro,
 } from "../../services/autenticacao";
+import { cores } from "../../theme";
 import styles from "./login.styles";
 
 const LoginScreen = () => {
@@ -103,13 +104,13 @@ const LoginScreen = () => {
         <View style={styles.formulario}>
           <Text style={styles.rotulo}>E-MAIL, CPF OU CELULAR</Text>
           <View style={styles.campo}>
-            <Ionicons name="at" size={18} color="#8A9A9E" />
+            <Ionicons name="at" size={18} color={cores.textoSuave} />
             <TextInput
               style={styles.entrada}
               value={identificador}
               onChangeText={setIdentificador}
               placeholder="seu.email@exemplo.com"
-              placeholderTextColor="#B0BEC0"
+              placeholderTextColor={cores.textoSuave}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="email-address"
@@ -124,13 +125,13 @@ const LoginScreen = () => {
             </Pressable>
           </View>
           <View style={styles.campo}>
-            <Ionicons name="lock-closed-outline" size={18} color="#8A9A9E" />
+            <Ionicons name="lock-closed-outline" size={18} color={cores.textoSuave} />
             <TextInput
               style={styles.entrada}
               value={senha}
               onChangeText={setSenha}
               placeholder="••••••••"
-              placeholderTextColor="#B0BEC0"
+              placeholderTextColor={cores.textoSuave}
               secureTextEntry={!senhaVisivel}
               editable={!carregando}
             />
@@ -141,7 +142,7 @@ const LoginScreen = () => {
               <Ionicons
                 name={senhaVisivel ? "eye-off-outline" : "eye-outline"}
                 size={20}
-                color="#8A9A9E"
+                color={cores.textoSuave}
               />
             </Pressable>
           </View>
@@ -152,11 +153,11 @@ const LoginScreen = () => {
             disabled={carregando}
           >
             {carregando ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={cores.textoInverso} />
             ) : (
               <>
                 <Text style={styles.textoBotaoEntrar}>Entrar no iHelp</Text>
-                <Ionicons name="arrow-forward" size={18} color="#fff" />
+                <Ionicons name="arrow-forward" size={18} color={cores.textoInverso} />
               </>
             )}
           </Pressable>
@@ -174,7 +175,7 @@ const LoginScreen = () => {
               disabled={carregando}
             >
               <Image source={googleImg} style={styles.iconeGoogle} />
-              <Text style={styles.textoGoogle}>Google</Text>
+              <Text style={styles.textoGoogle}>Google </Text>
             </Pressable>
           </View>
 

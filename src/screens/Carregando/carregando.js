@@ -9,11 +9,12 @@
  */
 import { View, ActivityIndicator } from "react-native";
 
+import { cores } from "../../theme";
 import styles from "./carregando.styles";
 
 const CarregandoScreen = () => (
   <View style={styles.container}>
-    <ActivityIndicator size="large" />
+    <ActivityIndicator size="large" color={cores.primary} />
   </View>
 );
 
