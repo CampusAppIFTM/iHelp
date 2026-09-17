@@ -12,64 +12,184 @@
  * ---------------------------------------------------------------------------
  */
 import { useState } from "react";
-import { View, Text, Image, ActivityIndicator } from "react-native";
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import logoImg from "../../../assets/logo.png";
-import { entrarComGoogle, descreverErro } from "../../services/autenticacao";
+import googleImg from "../../../assets/google-g.png";
+import {
+  entrarComGoogle,
+  entrarComEmailSenha,
+  enviarRedefinicaoSenha,
+  descreverErro,
+} from "../../services/autenticacao";
 import styles from "./login.styles";
 
 const LoginScreen = () => {
+  const [identificador, setIdentificador] = useState("");
+  const [senha, setSenha] = useState("");
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState(null);
+  const [aviso, setAviso] = useState(null);
 
-  const aoPressionar = async () => {
+  const executar = async (acao) => {
     setErro(null);
+    setAviso(null);
     setCarregando(true);
 
     try {
-      await entrarComGoogle();
-      // Se deu certo, não fazemos nada aqui: o onAuthStateChanged assume.
-      // Se o usuário cancelou, também não fazemos nada -- ele continua na tela.
+      await acao();
     } catch (e) {
       console.log("Falha no login:", e);
       setErro(descreverErro(e));
     } finally {
-      // O finally garante que o indicador SEMPRE é desligado, tenha o login
-      // dado certo, falhado ou sido cancelado. Esquecer isto é o motivo mais
-      // comum de um botão que "trava" carregando para sempre.
       setCarregando(false);
     }
   };
 
+  const aoEntrar = () => {
+    if (!identificador.trim() || !senha) {
+      setAviso(null);
+      setErro("Preencha e-mail e senha para continuar.");
+      return;
+    }
+
+    executar(() => entrarComEmailSenha(identificador, senha));
+  };
+
+  const aoPressionarGoogle = () => executar(entrarComGoogle);
+
+  const aoEsquecerSenha = () => {
+    if (!identificador.trim()) {
+      setAviso(null);
+      setErro("Informe o e-mail para redefinir a senha.");
+      return;
+    }
+
+    executar(async () => {
+      await enviarRedefinicaoSenha(identificador);
+      setAviso("Enviamos um e-mail para redefinir sua senha.");
+    });
+  };
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.tela}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.logoContainer}>
+          <Image source={logoImg} style={styles.logo} resizeMode="contain" />
+        </View>
 
-      <View style={styles.logoContainer}>
-        <Image source={logoImg} style={styles.logo} resizeMode="contain" />
-      </View>
+        <Text style={styles.titulo}>iHelp</Text>
+        <Text style={styles.subtitulo}>
+          Entre para gerenciar seus serviços ou solicitar ajuda residencial
+        </Text>
 
-      <Text style={styles.titulo}>iHelp</Text>
-      <Text style={styles.subtitulo}>Entre para continuar</Text>
+        <View style={styles.formulario}>
+          <Text style={styles.rotulo}>E-MAIL, CPF OU CELULAR</Text>
+          <View style={styles.campo}>
+            <Ionicons name="at" size={18} color="#8A9A9E" />
+            <TextInput
+              style={styles.entrada}
+              value={identificador}
+              onChangeText={setIdentificador}
+              placeholder="seu.email@exemplo.com"
+              placeholderTextColor="#B0BEC0"
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+              editable={!carregando}
+            />
+          </View>
 
-      {/*
-        GoogleSigninButton é o botão oficial. Além de pronto, ele atende às
-        diretrizes de marca do Google, exigidas para publicar na loja.
-        O disabled evita o erro IN_PROGRESS por toque duplo.
-      */}
-      <GoogleSigninButton
-        style={styles.botaoGoogle}
-        size={GoogleSigninButton.Size.Wide}
-        color={GoogleSigninButton.Color.Dark}
-        onPress={aoPressionar}
-        disabled={carregando}
-      />
+          <View style={styles.linhaSenha}>
+            <Text style={styles.rotulo}>SUA SENHA</Text>
+            <Pressable onPress={aoEsquecerSenha} disabled={carregando}>
+              <Text style={styles.linkLaranja}>Esqueceu a senha?</Text>
+            </Pressable>
+          </View>
+          <View style={styles.campo}>
+            <Ionicons name="lock-closed-outline" size={18} color="#8A9A9E" />
+            <TextInput
+              style={styles.entrada}
+              value={senha}
+              onChangeText={setSenha}
+              placeholder="••••••••"
+              placeholderTextColor="#B0BEC0"
+              secureTextEntry={!senhaVisivel}
+              editable={!carregando}
+            />
+            <Pressable
+              onPress={() => setSenhaVisivel((visivel) => !visivel)}
+              hitSlop={8}
+            >
+              <Ionicons
+                name={senhaVisivel ? "eye-off-outline" : "eye-outline"}
+                size={20}
+                color="#8A9A9E"
+              />
+            </Pressable>
+          </View>
 
-      {/* Área reservada com altura fixa: evita a tela "pular" ao aparecer. */}
-      <View style={styles.areaAviso}>
-        {carregando && <ActivityIndicator />}
-        {erro && <Text style={styles.erro}>{erro}</Text>}
-      </View>
-    </View>
+          <Pressable
+            style={[styles.botaoEntrar, carregando && styles.botaoDesativado]}
+            onPress={aoEntrar}
+            disabled={carregando}
+          >
+            {carregando ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Text style={styles.textoBotaoEntrar}>Entrar no iHelp</Text>
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </>
+            )}
+          </Pressable>
+
+          <View style={styles.divisor}>
+            <View style={styles.divisorLinha} />
+            <Text style={styles.divisorTexto}>ou continue com</Text>
+            <View style={styles.divisorLinha} />
+          </View>
+
+          <View style={styles.linhaGoogle}>
+            <Pressable
+              style={[styles.botaoGoogle, carregando && styles.botaoDesativado]}
+              onPress={aoPressionarGoogle}
+              disabled={carregando}
+            >
+              <Image source={googleImg} style={styles.iconeGoogle} />
+              <Text style={styles.textoGoogle}>Google</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.areaAviso}>
+            {erro && <Text style={styles.erro}>{erro}</Text>}
+            {aviso && <Text style={styles.aviso}>{aviso}</Text>}
+          </View>
+
+          <Text style={styles.rodape}>
+            Não tem uma conta?{" "}
+            <Text style={styles.linkLaranja}>Cadastre-se grátis</Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

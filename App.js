@@ -15,6 +15,13 @@
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet } from "react-native";
+import {
+  useFonts,
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+} from "@expo-google-fonts/plus-jakarta-sans";
 
 import { configurarGoogleSignin, observarUsuario } from "./src/services/autenticacao";
 import CarregandoScreen from "./src/screens/Carregando/carregando";
@@ -24,6 +31,12 @@ import HomeScreen from "./src/screens/Home/home";
 const App = () => {
   const [usuario, setUsuario] = useState(null);
   const [verificando, setVerificando] = useState(true);
+  const [fonteCarregada, erroFonte] = useFonts({
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+  });
 
   useEffect(() => {
     configurarGoogleSignin();
@@ -42,7 +55,7 @@ const App = () => {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      {verificando ? (
+      {verificando || (!fonteCarregada && !erroFonte) ? (
         <CarregandoScreen />
       ) : usuario ? (
         <HomeScreen usuario={usuario} />

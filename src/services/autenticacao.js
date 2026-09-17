@@ -27,6 +27,8 @@ import {
 import {
   GoogleAuthProvider,
   signInWithCredential,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
@@ -121,6 +123,22 @@ export async function entrarComGoogle() {
 }
 
 /**
+ * Login com e-mail e senha no Firebase.
+ * O campo da tela aceita e-mail, CPF ou celular; nesta etapa o Firebase
+ * autentica apenas por e-mail.
+ */
+export async function entrarComEmailSenha(email, senha) {
+  await signInWithEmailAndPassword(auth, email.trim(), senha);
+}
+
+/**
+ * Envia o e-mail de redefinição de senha do Firebase.
+ */
+export async function enviarRedefinicaoSenha(email) {
+  await sendPasswordResetEmail(auth, email.trim());
+}
+
+/**
  * Encerra a sessão.
  *
  * São DOIS logouts, e os dois são necessários:
@@ -147,7 +165,19 @@ export function descreverErro(erro) {
     case statusCodes.SIGN_IN_CANCELLED:
       // Mantido por compatibilidade com versões anteriores à 13.
       return null; // null = não mostrar mensagem, o usuário desistiu
+    case "auth/invalid-email":
+      return "Informe um e-mail válido.";
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "E-mail ou senha incorretos.";
+    case "auth/too-many-requests":
+      return "Muitas tentativas. Aguarde um momento e tente de novo.";
+    case "auth/user-disabled":
+      return "Esta conta foi desativada.";
+    case "auth/missing-email":
+      return "Informe o e-mail para redefinir a senha.";
     default:
-      return "Não foi possível entrar com o Google. Tente novamente.";
+      return erro?.message || "Não foi possível entrar. Tente novamente.";
   }
 }
