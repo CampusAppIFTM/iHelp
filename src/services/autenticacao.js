@@ -27,6 +27,8 @@ import {
 import {
   GoogleAuthProvider,
   signInWithCredential,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
@@ -45,6 +47,7 @@ import { auth } from "../../firebaseConfig";
 export function configurarGoogleSignin() {
   GoogleSignin.configure({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    prompt: "select_account",
     // offlineAccess: true, // só se o seu backend precisar de refresh token
   });
 }
@@ -62,6 +65,7 @@ export function configurarGoogleSignin() {
  * @returns {() => void} função que cancela a observação (usar no cleanup do useEffect)
  */
 export function observarUsuario(callback) {
+ 
   return onAuthStateChanged(auth, callback);
 }
 
@@ -91,7 +95,10 @@ export async function entrarComGoogle() {
   }
 
   const idToken = resposta.data?.idToken;
-
+  console.log(resposta.data);
+  
+  const email= resposta.data?.user.email
+  
   if (!idToken) {
     // Quase sempre significa webClientId ausente ou incorreto.
     throw new Error(
@@ -99,10 +106,36 @@ export async function entrarComGoogle() {
     );
   }
 
+  console.log("email",email);
+  
+  if (!email?.includes("iftm.edu.br")) {
+    // Quase sempre significa webClientId ausente ou incorreto.
+    sair()
+    throw new Error(
+      "O email não é do IFTM"
+    );
+  }
+
   const credencial = GoogleAuthProvider.credential(idToken);
   await signInWithCredential(auth, credencial);
 
   return { cancelado: false };
+}
+
+/**
+ * Login com e-mail e senha no Firebase.
+ * O campo da tela aceita e-mail, CPF ou celular; nesta etapa o Firebase
+ * autentica apenas por e-mail.
+ */
+export async function entrarComEmailSenha(email, senha) {
+  await signInWithEmailAndPassword(auth, email.trim(), senha);
+}
+
+/**
+ * Envia o e-mail de redefinição de senha do Firebase.
+ */
+export async function enviarRedefinicaoSenha(email) {
+  await sendPasswordResetEmail(auth, email.trim());
 }
 
 /**
@@ -132,7 +165,19 @@ export function descreverErro(erro) {
     case statusCodes.SIGN_IN_CANCELLED:
       // Mantido por compatibilidade com versões anteriores à 13.
       return null; // null = não mostrar mensagem, o usuário desistiu
+    case "auth/invalid-email":
+      return "Informe um e-mail válido.";
+    case "auth/invalid-credential":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return "E-mail ou senha incorretos.";
+    case "auth/too-many-requests":
+      return "Muitas tentativas. Aguarde um momento e tente de novo.";
+    case "auth/user-disabled":
+      return "Esta conta foi desativada.";
+    case "auth/missing-email":
+      return "Informe o e-mail para redefinir a senha.";
     default:
-      return "Não foi possível entrar com o Google. Tente novamente.";
+      return erro?.message || "Não foi possível entrar. Tente novamente.";
   }
 }
