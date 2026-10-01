@@ -20,6 +20,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { sair } from "../../services/autenticacao";
 import { cores } from "../../theme";
 import styles from "./home.styles";
+import PerfilScreen from "../Perfil/perfil";
 import encanadorImg from "../../../assets/encanador.png";
 
 const CATEGORIAS = ["Todos", "Eletricista", "Encanador", "Pintura"];
@@ -205,20 +206,12 @@ const HomeScreen = ({ usuario }) => {
   const renderConteudo = () => {
     if (aba === "perfil") {
       return (
-        <View style={styles.placeholder}>
-          <Avatar usuario={usuario} />
-          <Text style={styles.placeholderTitulo}>
-            {usuario.displayName ?? "Usuário"}
-          </Text>
-          <Text style={styles.placeholderTexto}>{usuario.email}</Text>
-          <Pressable
-            style={[styles.botaoOrcamento, styles.botaoSair]}
-            onPress={aoSair}
-            disabled={saindo}
-          >
-            <Text style={styles.botaoOrcamentoTexto}>Sair</Text>
-          </Pressable>
-        </View>
+        <PerfilScreen
+          usuario={usuario}
+          onSair={aoSair}
+          saindo={saindo}
+          onBuscar={() => setAba("inicio")}
+        />
       );
     }
 
