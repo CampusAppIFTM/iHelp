@@ -21,6 +21,7 @@ import { sair } from "../../services/autenticacao";
 import { cores } from "../../theme";
 import styles from "./home.styles";
 import PerfilScreen from "../Perfil/perfil";
+import EditarPerfilUserScreen from "../EditarPerfilUser/editarPerfilUser";
 import encanadorImg from "../../../assets/encanador.png";
 
 const CATEGORIAS = ["Todos", "Eletricista", "Encanador", "Pintura"];
@@ -123,6 +124,7 @@ const HomeScreen = ({ usuario }) => {
   const [busca, setBusca] = useState("");
   const [categoria, setCategoria] = useState("Todos");
   const [aba, setAba] = useState("inicio");
+  const [editandoPerfil, setEditandoPerfil] = useState(false);
   const [salvos, setSalvos] = useState([]);
   const [saindo, setSaindo] = useState(false);
 
@@ -204,6 +206,15 @@ const HomeScreen = ({ usuario }) => {
   );
 
   const renderConteudo = () => {
+    if (aba === "perfil" && editandoPerfil) {
+      return (
+        <EditarPerfilUserScreen
+          usuario={usuario}
+          onVoltar={() => setEditandoPerfil(false)}
+        />
+      );
+    }
+
     if (aba === "perfil") {
       return (
         <PerfilScreen
@@ -211,6 +222,7 @@ const HomeScreen = ({ usuario }) => {
           onSair={aoSair}
           saindo={saindo}
           onBuscar={() => setAba("inicio")}
+          onEditarPerfil={() => setEditandoPerfil(true)}
         />
       );
     }
@@ -251,26 +263,35 @@ const HomeScreen = ({ usuario }) => {
     <SafeAreaView style={styles.tela} edges={["top"]}>
       <View style={styles.conteudo}>{renderConteudo()}</View>
 
-      <SafeAreaView edges={["bottom"]} style={styles.tabBarSafe}>
-        <View style={styles.tabBar}>
-          {ABAS.map((item) => {
-            const ativo = aba === item.id;
+      {editandoPerfil ? null : (
+        <SafeAreaView edges={["bottom"]} style={styles.tabBarSafe}>
+          <View style={styles.tabBar}>
+            {ABAS.map((item) => {
+              const ativo = aba === item.id;
 
-            return (
-              <Pressable key={item.id} style={styles.tabItem} onPress={() => setAba(item.id)}>
-                <Ionicons
-                  name={ativo ? item.iconeAtivo : item.icone}
-                  size={22}
-                  color={ativo ? cores.primary : cores.textoSuave}
-                />
-                <Text style={[styles.tabRotulo, ativo && styles.tabRotuloAtivo]}>
-                  {item.rotulo}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </SafeAreaView>
+              return (
+                <Pressable
+                  key={item.id}
+                  style={styles.tabItem}
+                  onPress={() => {
+                    setEditandoPerfil(false);
+                    setAba(item.id);
+                  }}
+                >
+                  <Ionicons
+                    name={ativo ? item.iconeAtivo : item.icone}
+                    size={22}
+                    color={ativo ? cores.primary : cores.textoSuave}
+                  />
+                  <Text style={[styles.tabRotulo, ativo && styles.tabRotuloAtivo]}>
+                    {item.rotulo}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </SafeAreaView>
+      )}
     </SafeAreaView>
   );
 };

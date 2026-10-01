@@ -54,7 +54,7 @@ const AvatarGrande = ({ usuario }) => (
   </View>
 );
 
-const PerfilScreen = ({ usuario, onSair, saindo, onBuscar }) => {
+const PerfilScreen = ({ usuario, onSair, saindo, onBuscar, onEditarPerfil }) => {
   const nome = usuario.displayName ?? "Usuário";
 
   return (
@@ -77,7 +77,7 @@ const PerfilScreen = ({ usuario, onSair, saindo, onBuscar }) => {
           <Text style={styles.email}>{usuario.email}</Text>
 
           <View style={styles.acoes}>
-            <Pressable style={styles.botaoAcao}>
+            <Pressable style={styles.botaoAcao} onPress={onEditarPerfil}>
               <Text style={styles.botaoAcaoTexto}>Editar perfil</Text>
             </Pressable>
             <Pressable style={styles.botaoAcao} onPress={onSair} disabled={saindo}>
