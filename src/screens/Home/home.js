@@ -4,7 +4,7 @@
  * Feed de serviços após o login.
  * ---------------------------------------------------------------------------
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -13,11 +13,13 @@ import {
   Pressable,
   FlatList,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import { sair } from "../../services/autenticacao";
+import { listarServicos } from "../../services/servicos";
 import { cores } from "../../theme";
 import styles from "./home.styles";
 import PerfilScreen from "../Perfil/perfil";
@@ -25,39 +27,6 @@ import EditarPerfilUserScreen from "../EditarPerfilUser/editarPerfilUser";
 import encanadorImg from "../../../assets/encanador.png";
 
 const CATEGORIAS = ["Todos", "Eletricista", "Encanador", "Pintura"];
-
-const SERVICOS = [
-  {
-    id: "1",
-    categoria: "Eletricista",
-    titulo: "Eletricista Residencial & Manutenção",
-    descricao:
-      "Instalações elétricas, quadros de distribuição, tomadas e reparos urgentes com garantia de segurança.",
-    nota: 4.9,
-    avaliacoes: 142,
-    badge: "Atende em até 2h",
-  },
-  {
-    id: "2",
-    categoria: "Encanador",
-    titulo: "Encanador Hidráulico & Desentupimento",
-    descricao:
-      "Conserto de vazamentos em canos, desentupimento de pias, ralos, vasos e revisão hidráulica completa.",
-    nota: 4.8,
-    avaliacoes: 98,
-    badge: "Profissional Verificado",
-  },
-  {
-    id: "3",
-    categoria: "Pintura",
-    titulo: "Pintura & Pequenos Reparos",
-    descricao:
-      "Pintura de paredes internas, forros, aplicação de massa corrida e retoques de acabamento com agilidade.",
-    nota: 5.0,
-    avaliacoes: 64,
-    badge: "Visita Técnica Grátis",
-  },
-];
 
 const ABAS = [
   { id: "inicio", rotulo: "Início", icone: "home-outline", iconeAtivo: "home" },
@@ -87,7 +56,11 @@ const Avatar = ({ usuario, onPress }) => {
 const CardServico = ({ item, salvo, onSalvar }) => (
   <View style={styles.card}>
     <View style={styles.cardImagemCaixa}>
-      <Image source={encanadorImg} style={styles.cardImagem} resizeMode="cover" />
+      <Image
+        source={item.imagem ? { uri: item.imagem } : encanadorImg}
+        style={styles.cardImagem}
+        resizeMode="cover"
+      />
       <Pressable style={styles.salvar} onPress={() => onSalvar(item.id)} hitSlop={8}>
         <Ionicons
           name={salvo ? "bookmark" : "bookmark-outline"}
@@ -104,12 +77,14 @@ const CardServico = ({ item, salvo, onSalvar }) => (
       <View style={styles.cardMeta}>
         <Ionicons name="star" size={14} color={cores.estrela} />
         <Text style={styles.cardNota}>
-          {item.nota.toFixed(1)}
+          {Number(item.nota || 0).toFixed(1)}
           <Text style={styles.cardAvaliacoes}> ({item.avaliacoes} avaliações)</Text>
         </Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeTexto}>{item.badge}</Text>
-        </View>
+        {item.badge ? (
+          <View style={styles.badge}>
+            <Text style={styles.badgeTexto}>{item.badge}</Text>
+          </View>
+        ) : null}
       </View>
 
       <Pressable style={styles.botaoOrcamento}>
@@ -127,11 +102,45 @@ const HomeScreen = ({ usuario }) => {
   const [editandoPerfil, setEditandoPerfil] = useState(false);
   const [salvos, setSalvos] = useState([]);
   const [saindo, setSaindo] = useState(false);
+  const [servicosCadastrados, setServicosCadastrados] = useState([]);
+  const [carregandoServicos, setCarregandoServicos] = useState(true);
+  const [erroServicos, setErroServicos] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+
+    const carregar = async () => {
+      setCarregandoServicos(true);
+      setErroServicos("");
+
+      try {
+        const lista = await listarServicos();
+        if (ativo) setServicosCadastrados(lista);
+      } catch (e) {
+        console.log("Falha ao ler serviços:", e?.code, e?.message);
+        if (ativo) {
+          setErroServicos(
+            e?.code === "permission-denied"
+              ? "Sem permissão para ler a coleção servico no Firestore."
+              : "Não foi possível carregar os serviços."
+          );
+        }
+      } finally {
+        if (ativo) setCarregandoServicos(false);
+      }
+    };
+
+    carregar();
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   const servicos = useMemo(() => {
     const termo = busca.trim().toLowerCase();
 
-    return SERVICOS.filter((servico) => {
+    return servicosCadastrados.filter((servico) => {
       const naCategoria = categoria === "Todos" || servico.categoria === categoria;
       const naBusca =
         !termo ||
@@ -141,7 +150,7 @@ const HomeScreen = ({ usuario }) => {
 
       return naCategoria && naBusca;
     });
-  }, [busca, categoria]);
+  }, [busca, categoria, servicosCadastrados]);
 
   const aoSalvar = (id) => {
     setSalvos((atual) =>
@@ -253,7 +262,13 @@ const HomeScreen = ({ usuario }) => {
         contentContainerStyle={styles.lista}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <Text style={styles.vazio}>Nenhum serviço encontrado.</Text>
+          carregandoServicos ? (
+            <ActivityIndicator color={cores.primary} style={{ marginTop: 24 }} />
+          ) : (
+            <Text style={styles.vazio}>
+              {erroServicos || "Nenhum serviço encontrado."}
+            </Text>
+          )
         }
       />
     );
