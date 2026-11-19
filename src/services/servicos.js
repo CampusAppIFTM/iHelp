@@ -4,7 +4,7 @@
  * Lê os documentos da coleção `servico` no Firestore.
  * ---------------------------------------------------------------------------
  */
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 import { db } from "../firebaseConfig";
 
@@ -50,4 +50,38 @@ function mapearServico(documento) {
 export async function listarServicos() {
   const consulta = await getDocs(collection(db, COLECAO_SERVICO));
   return consulta.docs.map(mapearServico);
+}
+
+export async function cadastrarServico(dados) {
+  const titulo = dados.titulo?.trim() || "";
+  const descricao = dados.descricao?.trim() || "";
+  const categoria = dados.categoria?.trim() || inferirCategoria(titulo, descricao);
+  const imagem = dados.imagem?.trim() || "";
+  const badge = dados.badge?.trim() || "Novo";
+  const nota = Number(dados.nota ?? 5.0);
+  const avaliacoes = Number(dados.avaliacoes ?? 1);
+
+  const payload = {
+    titulo,
+    descricao,
+    categoria,
+    imagem,
+    "avg-avaliacao": nota,
+    "num-avaliacoes": avaliacoes,
+    badge,
+    criadoEm: new Date().toISOString(),
+  };
+
+  const docRef = await addDoc(collection(db, COLECAO_SERVICO), payload);
+
+  return {
+    id: docRef.id,
+    titulo,
+    descricao,
+    categoria,
+    imagem: uriImagem(imagem),
+    nota,
+    avaliacoes,
+    badge,
+  };
 }

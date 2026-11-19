@@ -14,12 +14,16 @@ import {
   FlatList,
   ScrollView,
   ActivityIndicator,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import { sair } from "../../services/autenticacao";
-import { listarServicos } from "../../services/servicos";
+import { listarServicos, cadastrarServico } from "../../services/servicos";
 import { cores } from "../../theme";
 import styles from "./home.styles";
 import PerfilScreen from "../Perfil/perfil";
@@ -27,6 +31,7 @@ import EditarPerfilUserScreen from "../EditarPerfilUser/editarPerfilUser";
 import encanadorImg from "../../../assets/encanador.png";
 
 const CATEGORIAS = ["Todos", "Eletricista", "Encanador", "Pintura"];
+const CATEGORIAS_CADASTRO = ["Eletricista", "Encanador", "Pintura", "Outros"];
 
 const ABAS = [
   { id: "inicio", rotulo: "Início", icone: "home-outline", iconeAtivo: "home" },
@@ -105,6 +110,13 @@ const HomeScreen = ({ usuario }) => {
   const [servicosCadastrados, setServicosCadastrados] = useState([]);
   const [carregandoServicos, setCarregandoServicos] = useState(true);
   const [erroServicos, setErroServicos] = useState("");
+  const [modalAberto, setModalAberto] = useState(false);
+  const [novoTitulo, setNovoTitulo] = useState("");
+  const [novaDescricao, setNovaDescricao] = useState("");
+  const [novaCategoria, setNovaCategoria] = useState("Eletricista");
+  const [novaImagem, setNovaImagem] = useState("");
+  const [novoBadge, setNovoBadge] = useState("");
+  const [salvandoServico, setSalvandoServico] = useState(false);
 
   useEffect(() => {
     let ativo = true;
@@ -165,6 +177,56 @@ const HomeScreen = ({ usuario }) => {
     } catch (e) {
       console.log("Falha ao sair:", e);
       setSaindo(false);
+    }
+  };
+
+  const limparFormulario = () => {
+    setNovoTitulo("");
+    setNovaDescricao("");
+    setNovaCategoria("Eletricista");
+    setNovaImagem("");
+    setNovoBadge("");
+  };
+
+  const aoFecharModal = () => {
+    if (salvandoServico) return;
+    setModalAberto(false);
+    limparFormulario();
+  };
+
+  const aoCadastrarServico = async () => {
+    if (!novoTitulo.trim()) {
+      Alert.alert("Atenção", "Por favor, informe o título do serviço.");
+      return;
+    }
+    if (!novaDescricao.trim()) {
+      Alert.alert("Atenção", "Por favor, informe a descrição do serviço.");
+      return;
+    }
+
+    setSalvandoServico(true);
+    try {
+      const servicoCriado = await cadastrarServico({
+        titulo: novoTitulo,
+        descricao: novaDescricao,
+        categoria: novaCategoria,
+        imagem: novaImagem,
+        badge: novoBadge,
+      });
+
+      setServicosCadastrados((anteriores) => [servicoCriado, ...anteriores]);
+      setModalAberto(false);
+      limparFormulario();
+      Alert.alert("Sucesso", "Serviço cadastrado com sucesso!");
+    } catch (e) {
+      console.log("Falha ao cadastrar serviço:", e);
+      Alert.alert(
+        "Erro ao salvar",
+        "Não foi possível salvar o serviço no banco de dados." +
+          (e?.message ? `\n(${e.message})` : "")
+      );
+    } finally {
+      setSalvandoServico(false);
     }
   };
 
@@ -276,7 +338,151 @@ const HomeScreen = ({ usuario }) => {
 
   return (
     <SafeAreaView style={styles.tela} edges={["top"]}>
-      <View style={styles.conteudo}>{renderConteudo()}</View>
+      <View style={styles.conteudo}>
+        {renderConteudo()}
+
+        {aba === "inicio" && !editandoPerfil && (
+          <Pressable
+            style={styles.fab}
+            onPress={() => setModalAberto(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Adicionar novo serviço"
+          >
+            <Ionicons name="add" size={32} color={cores.textoInverso} />
+          </Pressable>
+        )}
+      </View>
+
+      <Modal
+        visible={modalAberto}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={aoFecharModal}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitulo}>Adicionar Serviço</Text>
+              <Pressable
+                onPress={aoFecharModal}
+                style={styles.modalFechar}
+                hitSlop={8}
+              >
+                <Ionicons name="close" size={24} color={cores.texto} />
+              </Pressable>
+            </View>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.modalScroll}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={styles.grupoInput}>
+                <Text style={styles.rotuloInput}>Título do serviço *</Text>
+                <TextInput
+                  style={styles.campoTexto}
+                  value={novoTitulo}
+                  onChangeText={setNovoTitulo}
+                  placeholder="Ex: Instalação Elétrica Completa"
+                  placeholderTextColor={cores.textoSuave}
+                />
+              </View>
+
+              <View style={styles.grupoInput}>
+                <Text style={styles.rotuloInput}>Categoria</Text>
+                <View style={styles.categoriasContainer}>
+                  {CATEGORIAS_CADASTRO.map((cat) => {
+                    const ativo = novaCategoria === cat;
+                    return (
+                      <Pressable
+                        key={cat}
+                        onPress={() => setNovaCategoria(cat)}
+                        style={[
+                          styles.categoriaChip,
+                          ativo && styles.categoriaChipAtivo,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.categoriaChipTexto,
+                            ativo && styles.categoriaChipTextoAtivo,
+                          ]}
+                        >
+                          {cat}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+
+              <View style={styles.grupoInput}>
+                <Text style={styles.rotuloInput}>Descrição *</Text>
+                <TextInput
+                  style={[styles.campoTexto, styles.campoTextoMultilinha]}
+                  value={novaDescricao}
+                  onChangeText={setNovaDescricao}
+                  placeholder="Descreva detalhes sobre o serviço..."
+                  placeholderTextColor={cores.textoSuave}
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
+
+              <View style={styles.grupoInput}>
+                <Text style={styles.rotuloInput}>URL da imagem (opcional)</Text>
+                <TextInput
+                  style={styles.campoTexto}
+                  value={novaImagem}
+                  onChangeText={setNovaImagem}
+                  placeholder="https://exemplo.com/foto.jpg"
+                  placeholderTextColor={cores.textoSuave}
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View style={styles.grupoInput}>
+                <Text style={styles.rotuloInput}>Destaque / Badge (opcional)</Text>
+                <TextInput
+                  style={styles.campoTexto}
+                  value={novoBadge}
+                  onChangeText={setNovoBadge}
+                  placeholder="Ex: Novo, Destaque, Atendimento 24h"
+                  placeholderTextColor={cores.textoSuave}
+                />
+              </View>
+
+              <View style={styles.modalBotoes}>
+                <Pressable
+                  style={styles.botaoCancelarModal}
+                  onPress={aoFecharModal}
+                  disabled={salvandoServico}
+                >
+                  <Text style={styles.botaoCancelarModalTexto}>Cancelar</Text>
+                </Pressable>
+
+                <Pressable
+                  style={[
+                    styles.botaoSalvarModal,
+                    salvandoServico && styles.botaoSalvarModalDesabilitado,
+                  ]}
+                  onPress={aoCadastrarServico}
+                  disabled={salvandoServico}
+                >
+                  {salvandoServico ? (
+                    <ActivityIndicator color={cores.textoInverso} size="small" />
+                  ) : (
+                    <Text style={styles.botaoSalvarModalTexto}>Adicionar</Text>
+                  )}
+                </Pressable>
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
 
       {editandoPerfil ? null : (
         <SafeAreaView edges={["bottom"]} style={styles.tabBarSafe}>
